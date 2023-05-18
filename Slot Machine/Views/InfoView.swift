@@ -1,0 +1,82 @@
+//
+//  InfoView.swift
+//  Slot Machine
+//
+//  Created by Content Arcade on 18/05/2023.
+//
+
+import SwiftUI
+
+struct InfoView: View {
+  @Environment(\.presentationMode) var presentationMode
+  
+  var body: some View {
+    VStack(alignment: .center, spacing: 10) {
+      LogoView()
+      
+      Spacer()
+      
+      Form {
+        Section(header: Text("About the application")) {
+          FormRowView(firstItem: "Application", secondItem: "Slot Machine")
+          FormRowView(firstItem: "Platforms", secondItem: "iPhone, iPad, Mac")
+          FormRowView(firstItem: "Developer", secondItem: "John / Jane")
+          FormRowView(firstItem: "Designer", secondItem: "Robert Petras")
+          FormRowView(firstItem: "Music", secondItem: "Dan Lebowitz")
+          FormRowView(firstItem: "Website", secondItem: "https://credo.academy")
+          FormRowView(firstItem: "Copyright", secondItem: "© All rights reserved.")
+          FormRowView(firstItem: "Version", secondItem: "1.5.1")
+        }
+      }
+      .font(.system(.body, design: .rounded))
+    }
+    .padding(.top, 40)
+    .overlay(
+      Button(action: {
+        audioPlayer?.stop()
+        self.presentationMode.wrappedValue.dismiss()
+      }) {
+        Image(systemName: "xmark.circle")
+          .font(.title)
+      }
+      .padding(.top, 30)
+      .padding(.trailing, 20)
+      .accentColor(Color.secondary)
+      , alignment: .topTrailing
+      )
+      .onAppear(perform: {
+        playSound(sound: "background-music")
+      })
+  }
+}
+
+struct FormRowView: View {
+  var firstItem: String
+  var secondItem: String
+  
+  var body: some View {
+    HStack {
+      Text(firstItem).foregroundColor(Color.gray)
+      Spacer()
+      Text(secondItem)
+    }
+  }
+}
+
+struct LogoView: View {
+  var body: some View {
+    Image("gfx-slot-machine")
+    .resizable()
+    .scaledToFit()
+    .frame(minWidth: 256, idealWidth: 300, maxWidth: 320, minHeight: 112, idealHeight: 130, maxHeight: 140, alignment: .center)
+    .padding(.horizontal)
+    .layoutPriority(1)
+  }
+}
+
+
+struct InfoView_Previews: PreviewProvider {
+    static var previews: some View {
+        InfoView()
+    }
+}

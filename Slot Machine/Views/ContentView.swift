@@ -11,6 +11,12 @@ let images = [sevenImg, cherryImg, grapeImg]
 struct ContentView: View {
     
     @StateObject var gameVM = GameLogicVM()
+    var slideInAnimation: Animation {
+      Animation.spring(response: 1.5, dampingFraction: 0.5, blendDuration: 0.5)
+        .speed(1)
+        .delay(0.25)
+    }
+    @State var animate = false
     
     var body: some View {
         ZStack {
@@ -24,24 +30,25 @@ struct ContentView: View {
                     
                     //MARK: Top Buttons And Logo
                     HStack(alignment: .top) {
-                        Image(systemName: "repeat.1.circle.hi")
-                            .font(.system(size: geo.size.width * 0.08))
-                            .onTapGesture {
-                                withAnimation { gameVM.resetGame() }
-                            }
+                        Button(action: {withAnimation{ gameVM.resetGame() } }, label: {
+                            Image(systemName: "repeat.1.circle.hi")
+                                .font(.system(size: fullHeight * 0.035))
+                        })
                         Spacer()
+                        
                         Image(slotMachinLogoImg)
                             .resizable()
                             .scaledToFit()
-                            .frame(minWidth: 256, idealWidth: 300, maxWidth: 320, minHeight: 112, idealHeight: 130, maxHeight: 140, alignment: .center)
+                            .frame(maxWidth: fullHeight * 0.47, maxHeight: fullHeight * 0.20)
+                            .scaleEffect(animate ? 1:0.8)
+                            .animation(Animation.easeInOut(duration: 1).repeatForever(autoreverses: true), value: animate)
                         
                         Spacer()
                         
-                        Image(systemName: "info.circle")
-                            .font(.system(size: geo.size.width * 0.08))
-                            .onTapGesture {
-                                gameVM.showInfoView.toggle()
-                            }
+                        Button(action: { gameVM.showInfoView.toggle() }, label: {
+                            Image(systemName: "info.circle")
+                                .font(.system(size: fullHeight * 0.035))
+                        })
                     }
                     .padding([.top, .leading, .trailing])
                 
@@ -51,14 +58,14 @@ struct ContentView: View {
                         
                         HStack {
                             Text("**Your\nCouns**")
-                                .font(.system(size: geo.size.width * 0.025))
+                                .font(.system(size: fullHeight * 0.015))
                                 .lineSpacing(0)
                             Text("**\(gameVM.availableCoins)**")
-                                .font(.system(size: geo.size.width * 0.065))
+                                .font(.system(size: fullHeight * 0.037))
                                 .fontDesign(.monospaced)
                         }
                         .padding(.vertical, 4)
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 18)
                         .frame(minWidth: 128)
                         .background(Color.purple)
                         .cornerRadius(100)
@@ -67,13 +74,14 @@ struct ContentView: View {
                         
                         HStack {
                             Text("**\(gameVM.highScore)**")
-                                .font(.system(size: geo.size.width * 0.065))
+                                .font(.system(size: fullHeight * 0.037))
                                 .fontDesign(.monospaced)
                             Text("**High\nScore**")
-                                .font(.system(size: geo.size.width * 0.025))
+                                .font(.system(size: fullHeight * 0.015))
+                                .lineSpacing(0)
                         }
                         .padding(.vertical, 4)
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 18)
                         .frame(minWidth: 128)
                         .background(Color.purple)
                         .cornerRadius(100)
@@ -86,26 +94,24 @@ struct ContentView: View {
                         HStack {
                             Spacer()
                             GameOptionView(imageName: gameVM.selectedItem1)
-                                .frame(width: geo.size.width * 0.45, height: geo.size.width * 0.35)
+                                
                             Spacer()
                         }
                         HStack {
                             Spacer()
                             GameOptionView(imageName: gameVM.selectedItem2)
-                                .frame(width: geo.size.width * 0.45, height: geo.size.width * 0.35)
                             Spacer()
                             GameOptionView(imageName: gameVM.selectedItem3)
-                                .frame(width: geo.size.width * 0.45, height: geo.size.width * 0.35)
                             Spacer()
                         }
                         //Play Button
                         HStack {
                             Spacer()
-                            GameOptionView(imageName: spinBtnImage)
-                                .frame(width: geo.size.width * 0.45, height: geo.size.width * 0.35)
-                                .onTapGesture {
-                                    gameVM.playGame()
-                                }
+                            Button(action: { gameVM.playGame() }, label: {
+                                GameOptionView(imageName: spinBtnImage)
+                                
+                            })
+                            
                             Spacer()
                         }
                     }
@@ -135,7 +141,7 @@ struct ContentView: View {
                             .background(gameVM.betCoins == 20 ? .purple:.pink)
                             .cornerRadius(100)
                             .onTapGesture {
-                                withAnimation(.easeInOut(duration: 0.5)) { gameVM.changeBetCoins(10) }
+                                withAnimation(.easeInOut(duration:0.5)) { gameVM.changeBetCoins(10) }
                             }
                     }
                     .padding(.horizontal)
@@ -154,6 +160,7 @@ struct ContentView: View {
         .task {
             DispatchQueue.main.async {
                 playSound(sound: firstOpening)
+                animate.toggle()
             }
         }
         .sheet(isPresented: $gameVM.showInfoView) {
@@ -161,6 +168,38 @@ struct ContentView: View {
         }
     }
 }
+
+//extension ContentView {
+//    @ViewBuilder func gameOptionsAndPlayBtn() -> some View {
+//        VStack {
+//            HStack {
+//                Spacer()
+//                GameOptionView(imageName: gameVM.selectedItem1)
+//                    .frame(width: geo.size.width * 0.45, height: geo.size.width * 0.35)
+//                Spacer()
+//            }
+//            HStack {
+//                Spacer()
+//                GameOptionView(imageName: gameVM.selectedItem2)
+//                    .frame(width: geo.size.width * 0.45, height: geo.size.width * 0.35)
+//                Spacer()
+//                GameOptionView(imageName: gameVM.selectedItem3)
+//                    .frame(width: geo.size.width * 0.45, height: geo.size.width * 0.35)
+//                Spacer()
+//            }
+//            //Play Button
+//            HStack {
+//                Spacer()
+//                GameOptionView(imageName: spinBtnImage)
+//                    .frame(width: geo.size.width * 0.45, height: geo.size.width * 0.35)
+//                    .onTapGesture {
+//                        gameVM.playGame()
+//                    }
+//                Spacer()
+//            }
+//        }
+//    }
+//}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
@@ -175,6 +214,7 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
+
 struct GameOptionView: View {
     var imageName: String = sevenImg
     var body: some View {
@@ -187,7 +227,10 @@ struct GameOptionView: View {
                 .resizable()
                 .scaledToFit()
                 .padding(0)
+                .scaleEffect(imageName.isEmpty ? 0:1)
+                .animation(Animation.easeInOut(duration: 0.3), value: imageName.isEmpty)
         }
-//        .frame(maxWidth: fullWidth/2, maxHeight: fullWidth/3.2)
+        .frame(width: fullHeight * 0.17, height: fullHeight * 0.17)
     }
 }
+

@@ -102,6 +102,5 @@ class GameLogicVM: ObservableObject {
         playSound(sound: resetGameSound)
         showRefillAlert = false
         availableCoins = 100
-        betCoins = 10
     }
 }

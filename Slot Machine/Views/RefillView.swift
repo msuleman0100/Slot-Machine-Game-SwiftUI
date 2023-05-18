@@ -10,6 +10,7 @@ import SwiftUI
 struct RefillView: View {
     
     @State var gameVM = GameLogicVM()
+    @State var animate = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -25,28 +26,35 @@ struct RefillView: View {
             .frame(maxWidth: fullWidth-48, maxHeight: 70, alignment: .center)
             .background(Color.purple)
             
-            VStack(spacing: 20) {
+            Spacer()
+            
+            VStack(spacing: fullHeight * 0.03) {
                 Image("gfx-seven-reel")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 80, height: 80)
-                    .background(.black)
+                    .frame(width: fullHeight * 0.14,
+                           height: fullHeight * 0.13)
+                    .scaleEffect(animate ? 1:0.8)
+                    .animation(Animation.easeInOut(duration: 1).repeatForever(autoreverses: true), value: animate)
+                
                 Text("Bad luck! You lost all of the coins. \nLet's play again!")
-                  .font(.system(.body, design: .rounded))
-                  .lineLimit(2)
+                    .font(.system(size: fullHeight * 0.02,
+                                  design: .rounded))
                   .multilineTextAlignment(.center)
                   .foregroundColor(Color.gray)
-         
+                
                 Button(action: {
                     gameVM.resetGame()
                 }) {
                   Text("New Game".uppercased())
-                    .font(.system(.body, design: .rounded))
+                    .font(.system(size: fullHeight * 0.016,
+                                  design: .rounded))
                     .fontWeight(.semibold)
                     .foregroundColor(.pink)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
-                    .frame(minWidth: 134)
+                    .frame(width: fullHeight * 0.13,
+                           height: fullHeight * 0.04)
                     .background(
                       Capsule()
                         .strokeBorder(lineWidth: 1.75)
@@ -54,18 +62,29 @@ struct RefillView: View {
                     )
                 }
             }
-            .frame(maxHeight: 280)
-           
+            .frame(maxHeight: fullHeight * 0.4)
+            Spacer()
         }
-        .frame(maxWidth: fullWidth-48, maxHeight: 350)
+        .frame(maxWidth: fullHeight * 0.35,
+               maxHeight: fullHeight * 0.4, alignment: .top)
         .background(Color.white)
         .foregroundColor(.white)
         .cornerRadius(14)
+        .onAppear() {
+            animate.toggle()
+        }
     }
 }
 
 struct RefillView_Previews: PreviewProvider {
     static var previews: some View {
-        RefillView()
+        Group {
+            RefillView()
+                .previewDevice(
+                PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
+            RefillView()
+                .previewDevice(
+                PreviewDevice(rawValue: "iPhone 14 Pro"))
+        }
     }
 }

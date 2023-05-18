@@ -53,8 +53,6 @@ class GameLogicVM: ObservableObject {
             gameWon()
         } else {
             //looding state
-            let haptics = UINotificationFeedbackGenerator()
-            haptics.notificationOccurred(.success)
             gameLossed()
         }
     }

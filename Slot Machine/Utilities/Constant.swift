@@ -24,8 +24,8 @@ let bellImg           = "gfx-bell"
 
 
 //MARK: Device-Width and Height
-let fullWidth: CGFloat  = UIScreen.main.bounds.width
-let fullHeight: CGFloat = UIScreen.main.bounds.height
+let fullWidth: CGFloat  = 900
+let fullHeight: CGFloat = 700
 
 
 //MARK: Sounds
